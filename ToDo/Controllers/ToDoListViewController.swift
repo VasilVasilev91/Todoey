@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    var itemArray: [String] = []
+    var itemArray: [Item] = [Item]()
     let defaults = UserDefaults.standard
     
     
@@ -18,10 +18,22 @@ class ToDoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        if let items = defaults.array(forKey: "storedArray") as? [String] {
-            itemArray = items
-        }
+//        if let items = defaults.array(forKey: "storedArray") as? [Item] {
+//            itemArray = items
+//        }
+        
+        let item1 = Item()
+        let item2 = Item()
+        let item3 = Item()
+        item1.title = "Item1"
+        item2.title = "Item2"
+        item3.title = "Item3"
+        itemArray.append(item1)
+        itemArray.append(item2)
+        itemArray.append(item3)
+        
     }
+    
     
     
     //MARK - Tableview Datasource Methods
@@ -36,7 +48,10 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = itemArray[indexPath.row].title
+        
+        cell.accessoryType = itemArray[indexPath.row].done == true ? .checkmark : .none
+        
         return cell
     }
     
@@ -47,10 +62,11 @@ class ToDoListViewController: UITableViewController {
         
         if currenctCell!.accessoryType == .none {
             currenctCell!.accessoryType = .checkmark
+            itemArray[indexPath.row].done = true
         }
         else {
             currenctCell!.accessoryType = .none
-            
+            itemArray[indexPath.row].done = false
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -62,10 +78,13 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { [weak self] (action) in
             //what will happen once the user hit the Add button
-            print("Success - new Item added in the array!")
-            self?.itemArray.append(alert.textFields?.first?.text ?? "")
+            
+            let newItem = Item()
+            
+            newItem.title = alert.textFields?.first?.text ?? ""
+            self?.itemArray.append(newItem)
             self?.tableView.reloadData()
-            print(self?.itemArray.map {$0.description} ?? "")
+            print(self?.itemArray.map {$0.title.description.description} ?? "")
             
             self?.defaults.set(self?.itemArray, forKey: "storedArray")
     
