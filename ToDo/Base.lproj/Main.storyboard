@@ -29,11 +29,18 @@
                             <outlet property="delegate" destination="BR6-1F-wLK" id="fFM-4H-Ido"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Todoey" id="KB7-LA-mGu"/>
+                    <navigationItem key="navigationItem" title="Todoey" id="KB7-LA-mGu">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="7h3-28-Wep">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addNewItem:" destination="BR6-1F-wLK" id="HVc-xI-4PD"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zq6-qA-4xd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1039.1304347826087" y="81.696428571428569"/>
+            <point key="canvasLocation" x="936" y="82"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="3O5-fX-pq1">
