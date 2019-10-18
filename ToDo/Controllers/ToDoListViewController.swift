@@ -11,16 +11,13 @@ import UIKit
 class ToDoListViewController: UITableViewController {
     
     var itemArray: [Item] = [Item]()
-    let defaults = UserDefaults.standard
-    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+   
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-//        if let items = defaults.array(forKey: "storedArray") as? [Item] {
-//            itemArray = items
-//        }
         
         let item1 = Item()
         let item2 = Item()
@@ -57,7 +54,7 @@ class ToDoListViewController: UITableViewController {
     
     //MARK: Check which Table View was selected - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(itemArray[indexPath.row])
+        print("\(itemArray[indexPath.row].title) + \(itemArray[indexPath.row].done)")
         let currenctCell = tableView.cellForRow(at: indexPath)
         
         if currenctCell!.accessoryType == .none {
@@ -70,33 +67,49 @@ class ToDoListViewController: UITableViewController {
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        self.saveToDataFile()
     }
     
     //MARK: Add New Items:
     @IBAction func addNewItem(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { [weak self] (action) in
+        let alert = UIAlertController(title: "Add new item", message: "MESSAGE", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add Item", style: .default) {  [weak self] (action) in
             //what will happen once the user hit the Add button
+        
             
             let newItem = Item()
-            
+
             newItem.title = alert.textFields?.first?.text ?? ""
             self?.itemArray.append(newItem)
             self?.tableView.reloadData()
             print(self?.itemArray.map {$0.title.description.description} ?? "")
-            
-            self?.defaults.set(self?.itemArray, forKey: "storedArray")
+        
+            self?.saveToDataFile()
     
         }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create a new item"
-    
+
         }
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
 
+    }
+    
+    
+    func saveToDataFile() {
+        let encoder = PropertyListEncoder()
+
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: (dataFilePath)!)
+        } catch {
+            print("Error in encoding data, \(error)")
+        }
+        
     }
     
 }
