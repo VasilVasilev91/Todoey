@@ -19,15 +19,7 @@ class ToDoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let item1 = Item()
-        let item2 = Item()
-        let item3 = Item()
-        item1.title = "Item1"
-        item2.title = "Item2"
-        item3.title = "Item3"
-        itemArray.append(item1)
-        itemArray.append(item2)
-        itemArray.append(item3)
+        loadItems()
         
     }
     
@@ -48,6 +40,7 @@ class ToDoListViewController: UITableViewController {
         cell.textLabel?.text = itemArray[indexPath.row].title
         
         cell.accessoryType = itemArray[indexPath.row].done == true ? .checkmark : .none
+        
         
         return cell
     }
@@ -110,6 +103,17 @@ class ToDoListViewController: UITableViewController {
             print("Error in encoding data, \(error)")
         }
         
+    }
+    
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+         let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding the data.")
+            }
+        }
     }
     
 }
