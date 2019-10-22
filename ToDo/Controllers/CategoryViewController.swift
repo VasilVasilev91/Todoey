@@ -41,8 +41,20 @@ class CategoryViewController: UITableViewController {
 
     //MARK: - TABLE VIEW DELEGATE METHODS
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
+        
+        performSegue(withIdentifier: "goToItems", sender: self)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToItems" {
+            let destinationVC = segue.destination as! ToDoListViewController
+            if let indexPath = tableView.indexPathForSelectedRow{
+                destinationVC.selectedCategory = categoryArray[indexPath.row]
+            }
+        }
+    }
+    
     
     //MARK: - DATA MANIPULATION
     func saveCategories() {
@@ -65,9 +77,7 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    //MARK: -
-    
-    //MARK: -
+
     
     //MARK: - Did press add category button
     @IBAction func didTapAddCategoryButton(_ sender: UIBarButtonItem) {
@@ -80,8 +90,8 @@ class CategoryViewController: UITableViewController {
             
             newCategory.name = alert.textFields?.first?.text
             
-            self!.categoryArray.append(newCategory)
-            self!.saveCategories()
+            self?.categoryArray.append(newCategory)
+            self?.saveCategories()
         }
         
         alert.addAction(action)
