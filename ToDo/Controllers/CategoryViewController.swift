@@ -8,7 +8,6 @@
 
 import UIKit
 import RealmSwift
-import SwipeCellKit
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -19,7 +18,6 @@ class CategoryViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.rowHeight = 80.0
         
         loadItems()
 
