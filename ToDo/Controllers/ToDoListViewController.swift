@@ -9,8 +9,11 @@
 import UIKit
 //import CoreData
 import RealmSwift
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
+    
+    @IBOutlet weak var searchBarOutlet: UISearchBar!
     
     var itemArray: Results<Item>?
     let realm = try! Realm()
@@ -24,8 +27,38 @@ class ToDoListViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+        tableView.separatorStyle = .none
         
+        
+        if let categoryName = selectedCategory?.name {
+            title = categoryName
+        }
+       
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("Navigation controller does not exist.")
+        }
+        
+        guard let hexColour = selectedCategory?.bgColor else { fatalError("HexColor not found in selectedCategory object.")}
+            navBar.backgroundColor = UIColor(hexString: hexColour)
+            searchBarOutlet.barTintColor = UIColor(hexString: hexColour)
+            searchBarOutlet.searchTextField.backgroundColor = .flatWhite()
+            navBar.tintColor = ContrastColorOf(UIColor(hexString: hexColour)!, returnFlat: true)
+            navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: ContrastColorOf(UIColor(hexString: hexColour)!, returnFlat: true)]
+        
+        
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalColor = UIColor(hexString: "1D9BF6") else {fatalError("Not able to set the original color from the hex string.") }
+        navigationController?.navigationBar.backgroundColor = originalColor
+        navigationController?.navigationBar.tintColor = UIColor.flatWhite()
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.strikethroughColor: FlatWhite()]
     }
     
     
@@ -45,6 +78,14 @@ class ToDoListViewController: SwipeTableViewController {
         cell.textLabel?.text = itemArray?[indexPath.row].title ?? "No Items"
         
         cell.accessoryType = itemArray?[indexPath.row].done == true ? .checkmark : .none
+        
+        
+        let parentCategoryColor = UIColor.init(hexString: (selectedCategory?.bgColor)!)
+        if let color = parentCategoryColor!.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray!.count)) {
+            cell.backgroundColor = color
+            cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            cell.tintColor = ContrastColorOf(color, returnFlat: true)
+        }
         
         return cell
     }
@@ -72,7 +113,7 @@ class ToDoListViewController: SwipeTableViewController {
     //MARK: - Add New Items:
     @IBAction func addNewItem(_ sender: UIBarButtonItem) {
         
-        let alert = UIAlertController(title: "Add new item", message: "MESSAGE", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new item", message: nil, preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) {  [weak self] (action) in
             //what will happen once the user hit the Add button
             
